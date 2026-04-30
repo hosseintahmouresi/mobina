@@ -32,6 +32,14 @@ $baseHref = htmlspecialchars(rtrim(isset($config['app']['base_url']) ? $config['
     <link rel="stylesheet" href="assets/css/memories.css?v=322">
     <link rel="stylesheet" href="assets/css/settings.css?v=322">
     <link rel="stylesheet" href="assets/css/mobile-fixes.css?v=322">
+    <!-- Modular JS - Load in order -->
+    <script defer src="assets/js/modules/constants.js?v=322"></script>
+    <script defer src="assets/js/modules/utils.js?v=322"></script>
+    <script defer src="assets/js/modules/localdb.js?v=322"></script>
+    <script defer src="assets/js/modules/polling.js?v=322"></script>
+    <script defer src="assets/js/modules/imageOptimizer.js?v=322"></script>
+    <script defer src="assets/js/app.modular.js?v=322"></script>
+    <!-- Legacy fallback -->
     <script defer src="assets/app.js?v=322"></script>
     <script defer src="assets/enhancements.js?v=322"></script>
 </head>
