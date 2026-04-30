@@ -1,0 +1,813 @@
+/* ============================================
+   SoulMate 2.5 - Modern UI Enhancements
+   ============================================ */
+
+/* Network Status Indicator */
+.network-status {
+    position: fixed;
+    top: max(12px, env(safe-area-inset-top));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.network-status.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.network-status.is-offline {
+    border-color: #dc2626;
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+}
+
+.network-status.is-slow {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.network-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: networkPulse 1.5s ease-in-out infinite;
+}
+
+.network-status.is-offline .network-dot {
+    animation: none;
+}
+
+@keyframes networkPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+}
+
+/* Message Undo & Delete Buttons */
+.message-undo-btn,
+.message-delete-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    margin-top: 6px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0;
+    max-width: 0;
+    pointer-events: none;
+}
+
+body[data-theme="dark"] .message-undo-btn,
+body[data-theme="dark"] .message-delete-btn {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.message:hover .message-undo-btn,
+.message:hover .message-delete-btn {
+    opacity: 1;
+    max-width: 200px;
+    pointer-events: auto;
+}
+
+.message-delete-btn:hover {
+    border-color: #dc2626;
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.1);
+}
+
+/* Loading States & Skeletons */
+.skeleton {
+    background: linear-gradient(90deg, var(--surface-muted) 25%, var(--surface) 50%, var(--surface-muted) 75%);
+    background-size: 200% 100%;
+    animation: skeletonLoading 1.5s infinite;
+    border-radius: var(--radius);
+}
+
+@keyframes skeletonLoading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.message.is-loading {
+    opacity: 0.7;
+}
+
+.message.is-loading .bubble {
+    background: var(--surface-muted);
+    min-height: 42px;
+}
+
+/* Loading Spinner */
+.spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(225, 29, 72, 0.2);
+    border-top-color: var(--rose);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Queued offline messages */
+.status[data-status="queued"] {
+    color: var(--muted);
+    opacity: 0.6;
+}
+
+/* Pull-to-Refresh Indicator (Mobile) */
+.pull-to-refresh {
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--rose);
+    color: white;
+    font-size: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease, top 0.3s ease;
+    pointer-events: none;
+}
+
+.messages.is-pulling .pull-to-refresh {
+    opacity: 1;
+    top: 0;
+}
+
+/* Typing Indicator Animation */
+.typing-line {
+    transition: opacity 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    height: 0;
+}
+
+.typing-line.is-active {
+    opacity: 1;
+    transform: translateY(0);
+    height: auto;
+}
+
+.typing-bubble {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.typing-avatar {
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--teal-soft);
+    color: var(--teal);
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.typing-text {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+}
+
+.typing-indicator {
+.typing-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    height: 16px;
+}
+
+.typing-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: typingBounce 1.2s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes typingBounce {
+    0%, 100% {
+        transform: translateY(0);
+        opacity: 0.6;
+    }
+    50% {
+        transform: translateY(-4px);
+        opacity: 1;
+    }
+}
+
+/* Better Button Interactions */
+.primary-button:active,
+.secondary-button:active,
+.send-button:active {
+    transform: scale(0.95);
+}
+
+.primary-button:focus,
+.secondary-button:focus,
+.icon-button:focus,
+.tool-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.2);
+}
+
+/* Smooth Focus Indicator */
+:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+}
+
+/* Message Reactions Animation */
+.reaction-chip {
+    animation: reactionPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes reactionPop {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Better Input Focus State */
+input:focus,
+textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+    animation: focusGlow 0.4s ease;
+}
+
+@keyframes focusGlow {
+    from {
+        box-shadow: 0 0 0 0 rgba(15, 118, 110, 0.4);
+    }
+}
+
+/* Modal/Dialog Animations */
+.modal,
+.dialog {
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Smooth Transitions for Tab Changes */
+.tab-panel {
+    animation: tabFadeIn 0.2s ease;
+}
+
+@keyframes tabFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Battery Indicator */
+.battery-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: rgba(245, 158, 11, 0.1);
+    color: var(--amber);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.battery-indicator[data-level="low"] {
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    animation: batteryWarning 1.5s ease-in-out infinite;
+}
+
+@keyframes batteryWarning {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* Search/Filter Input */
+.search-input {
+    position: relative;
+}
+
+.search-input::before {
+    content: "🔍";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+}
+
+.search-input input {
+    padding-right: 36px;
+}
+
+/* Lazy Load Image Placeholder */
+.image-placeholder {
+    background: linear-gradient(45deg, var(--surface-muted) 25%, transparent 25%, transparent 75%, var(--surface-muted) 75%, var(--surface-muted)),
+                linear-gradient(45deg, var(--surface-muted) 25%, transparent 25%, transparent 75%, var(--surface-muted) 75%, var(--surface-muted));
+    background-size: 16px 16px;
+    background-position: 0 0, 8px 8px;
+    background-color: var(--surface);
+    animation: imagePlaceholder 1.5s infinite;
+}
+
+@keyframes imagePlaceholder {
+    0% { opacity: 0.5; }
+    50% { opacity: 1; }
+    100% { opacity: 0.5; }
+}
+
+/* Message Status Animations */
+.status {
+    transition: color 0.3s ease;
+}
+
+.status[data-status="sending"] {
+    animation: statusPulse 1s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+/* Smooth Scroll Behavior */
+.messages {
+    scroll-behavior: smooth;
+}
+
+@supports (scroll-behavior: smooth) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Notification Badge Animation */
+.notification-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--rose);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    animation: badgePulse 0.6s ease;
+}
+
+@keyframes badgePulse {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Smooth Page Transitions */
+[data-state="loading"] {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* Responsive Enhancements for Mobile */
+@media (max-width: 520px) {
+    .network-status {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+
+    .message-undo-btn,
+    .message-delete-btn {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+
+    .notification-badge {
+        width: 20px;
+        height: 20px;
+        font-size: 11px;
+    }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Dark Mode Enhancements */
+body[data-theme="dark"] .network-status {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+body[data-theme="dark"] .battery-indicator {
+    background: rgba(251, 191, 36, 0.1);
+}
+
+body[data-theme="dark"] .skeleton {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+}
+
+/* Smooth Transition for Theme Switch */
+html {
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Emoji Picker Improvements */
+.emoji-picker {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
+    gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+}
+
+.emoji-picker button {
+    width: 32px;
+    height: 32px;
+    display: grid;
+    place-items: center;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.emoji-picker button:hover {
+    background: var(--surface-muted);
+    border-color: var(--line);
+    transform: scale(1.15);
+}
+
+/* Better Message Bubbles with Subtle Shadows */
+.bubble {
+    transition: all 0.2s ease;
+}
+
+.bubble:hover {
+    box-shadow: 0 12px 32px rgba(17, 24, 39, 0.12);
+}
+
+/* Auto Logout Warning */
+.auto-logout-warning {
+    position: fixed;
+    bottom: max(24px, env(safe-area-inset-bottom));
+    right: 18px;
+    z-index: 50;
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    background: var(--amber);
+    color: white;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+    animation: warningSlideIn 0.3s ease;
+}
+
+@keyframes warningSlideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.breadcrumb a {
+    color: var(--teal);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.breadcrumb a:hover {
+    color: var(--rose);
+}
+
+/* Divider Improvements */
+.divider {
+    height: 1px;
+    background: var(--line);
+    margin: 12px 0;
+}
+
+/* Tag Styling */
+.tag {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: var(--rose-soft);
+    color: var(--rose);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.tag.primary {
+    background: var(--teal-soft);
+    color: var(--teal);
+}
+
+/* Progress Bar */
+.progress {
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--surface-muted);
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--rose), var(--amber));
+    border-radius: 999px;
+    animation: progress 2s ease infinite;
+}
+
+@keyframes progress {
+    0% { width: 0; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
+
+/* Keep core message actions usable on touch devices. */
+.message-delete-btn {
+    border: 0;
+    border-radius: 999px;
+    background: rgba(225, 29, 72, .09);
+    color: var(--rose);
+    padding: 2px 8px;
+    font-size: 10px;
+    opacity: 1;
+    max-width: none;
+    pointer-events: auto;
+    margin-top: 0;
+}
+
+.emoji-picker {
+    min-width: 236px;
+    border: 1px solid var(--glass-line, var(--line));
+    border-radius: 18px;
+    background: var(--glass-strong, var(--surface));
+    box-shadow: var(--float-shadow, var(--shadow));
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.auto-logout-warning {
+    left: 50%;
+    right: auto;
+    bottom: calc(var(--nav-height, 66px) + var(--nav-bottom, 10px) + 20px);
+    transform: translateX(-50%);
+    border: 1px solid var(--glass-line, var(--line));
+    border-radius: 18px;
+    background: var(--glass-strong, var(--surface));
+    box-shadow: var(--float-shadow, var(--shadow));
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+}
+
+.battery-indicator {
+    min-width: 38px;
+    height: 28px;
+    display: inline-grid;
+    place-items: center;
+    border: 1px solid var(--glass-line, var(--line));
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .08);
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 900;
+    padding: 0 8px;
+}
+
+.battery-indicator.is-charging {
+    color: var(--teal);
+    background: rgba(45, 212, 191, .10);
+}
+
+/* ============================================
+   Phase 3: Fluid UI/UX & Native Gestures
+   ============================================ */
+
+/* 1. Bottom Sheet Styles */
+.bottom-sheet-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    align-items: flex-end;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.bottom-sheet-overlay.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.bottom-sheet {
+    width: 100%;
+    max-height: 90dvh;
+    background: var(--surface);
+    border-radius: 28px 28px 0 0;
+    padding: 12px 24px 32px;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.bottom-sheet-overlay.is-visible .bottom-sheet {
+    transform: translateY(0);
+}
+
+.bottom-sheet-handle {
+    width: 40px;
+    height: 5px;
+    background: var(--line);
+    border-radius: 999px;
+    margin: 0 auto 20px;
+}
+
+.bottom-sheet-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.bottom-sheet-header strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.bottom-sheet-header p {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0;
+}
+
+.bottom-sheet-body {
+    display: grid;
+    gap: 12px;
+}
+
+.bottom-sheet-body input {
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 4px;
+    font-size: 20px;
+}
+
+.bottom-sheet-body .danger {
+    background: #e11d48;
+    border-color: #e11d48;
+    color: white;
+}
+
+/* 2. View Transitions API */
+::view-transition-group(root) {
+    animation-duration: 0.35s;
+}
+
+:root[data-transition-dir="forward"] ::view-transition-old(tab-content) {
+    animation: slideOutLeft 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+:root[data-transition-dir="forward"] ::view-transition-new(tab-content) {
+    animation: slideInRight 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+:root[data-transition-dir="backward"] ::view-transition-old(tab-content) {
+    animation: slideOutRight 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+:root[data-transition-dir="backward"] ::view-transition-new(tab-content) {
+    animation: slideInLeft 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideOutLeft { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(-30px); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideOutRight { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(30px); } }
+
+/* Biometric Buttons */
+.biometric-btn {
+    margin-top: 4px;
+    color: var(--teal);
+    border: 1px dashed color-mix(in srgb, var(--teal), transparent 50%);
+}
+
+/* ============================================
+   Dynamic Theming (Glassmorphism Halo)
+   ============================================ */
+:root {
+    --dynamic-theme-color: transparent;
+    --dynamic-theme-color-dark: transparent;
+}
+
+body.has-dynamic-theme .app-shell {
+    background: radial-gradient(circle at 50% 0%, var(--dynamic-theme-color), transparent 60%), var(--bg) !important;
+    transition: background 1.5s ease;
+}
+
+body[data-theme="dark"].has-dynamic-theme .app-shell {
+    background: radial-gradient(circle at 50% 0%, var(--dynamic-theme-color-dark), transparent 60%), var(--bg) !important;
+}

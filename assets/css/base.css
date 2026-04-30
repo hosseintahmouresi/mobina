@@ -1,0 +1,20 @@
+/* Modular CSS entry: base-level refinements live here while legacy app.css is gradually reduced. */
+:where(button, input, textarea, select) {
+  font-family: inherit;
+}
+
+select {
+  min-height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 12px;
+}
+
+.empty-state.compact {
+  min-height: 46px;
+  padding: 12px;
+  display: grid;
+  place-items: center;
+}

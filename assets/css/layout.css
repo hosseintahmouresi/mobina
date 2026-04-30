@@ -1,0 +1,18 @@
+/* Modular CSS entry: shared layout and bottom-sheet polish. */
+.bottom-sheet-body {
+  gap: 10px;
+}
+
+.bottom-sheet-body input:not([hidden]) {
+  width: 100%;
+  min-height: 44px;
+}
+
+.composer-tools-sheet-open::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 58;
+  background: rgba(15, 23, 42, .28);
+  backdrop-filter: blur(8px);
+}

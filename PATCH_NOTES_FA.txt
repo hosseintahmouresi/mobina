@@ -1,0 +1,79 @@
+SoulMate 3.2.2 - Emergency Runtime Fix
+
+- توابع حذف‌شده بخش عشقمون که باعث ReferenceError و خوابیدن کامل مسنجر می‌شدند برگشتند.
+- currentCoupleDays / updateLovePanel / loadLoveItems / sendTimedLoveMessage / album / mood / sticker / event / promise / advancedSearch تعریف شدند.
+- فرم تکراری albumForm در index.php اصلاح شد.
+- cache و query string به v=322 تغییر کرد تا مرورگر نسخه خراب قبلی را نگه ندارد.
+
+SoulMate 3.2.2 - Stability / Cleanup
+
+تغییرات این نسخه:
+
+1. Reply واقعی اصلاح شد:
+   - مقدار reply_to_id قبل از پاک شدن preview ذخیره می‌شود.
+   - بعد از ارسال پیام، حالت reply برای پیام بعدی لغو می‌شود.
+   - پیام optimistic هم preview ریپلای را درست نشان می‌دهد.
+
+2. Swipe reply قطعی به سمت چپ تغییر کرد:
+   - شرط gesture به dx منفی تغییر کرد.
+   - مقدار --swipe-x صحیح و عددی شد.
+   - progress، vibration و افکت left-swipe اصلاح شد.
+
+3. CSS پاک‌سازی شد:
+   - پچ‌های متراکم انتهای فایل حذف و با یک cleanup نهایی جایگزین شد.
+   - قوانین دسکتاپ جداگانه min-width 900 و 881 حذف شدند.
+   - در دسکتاپ هم فقط mobile shell نمایش داده می‌شود.
+
+4. Focus style یکسان شد:
+   - outline و halo رنگی ناهماهنگ حذف شد.
+   - فوکوس input/textarea مینیمال و غیرتهاجمی شد.
+
+5. Icon system یکپارچه‌تر شد:
+   - دکمه‌های اصلی و ابزارها با mask SVG واحد render می‌شوند.
+   - آیکن‌ها وسط‌چین و هم‌اندازه شدند.
+   - دکمه‌های memory/edit/delete/unlock و voice نیز به همین سیستم وصل شدند.
+
+6. نسخه و cache bump شد:
+   - config/update/install/repair/upgrade به 3.2.2 رفتند.
+   - service worker به soulmate-shell-v322 تغییر کرد.
+   - query string فایل‌های CSS/JS به v=322 تغییر کرد.
+   - manifest version اضافه شد.
+
+7. قفل خاطره اصلاح شد:
+   - خاطره locked تا قبل از unlock محتوا و عکس را از API برنمی‌گرداند.
+   - باز کردن قفل با رمز ورود کاربر و به مدت ۳۰ دقیقه در session انجام می‌شود.
+   - ویرایش/حذف خاطره قفل‌شده بدون unlock مسدود شد.
+   - از overwrite شدن note/image خاطره قفل‌شده جلوگیری شد.
+
+تست‌های انجام‌شده:
+
+- node --check assets/app.js
+- node --check assets/enhancements.js
+- node --check sw.js
+- php -l برای فایل‌های تغییر داده‌شده و فایل‌های نصب/آپدیت اصلی
+- static checks برای reply، left-swipe، lock memory، mobile-only CSS و cache bump
+- zip integrity test
+
+تست‌هایی که داخل این محیط قابل انجام نبود:
+
+- تست واقعی روی گوشی فیزیکی
+- تست واقعی با دو مرورگر هم‌زمان و دیتابیس/هاست واقعی
+
+برای این دو مورد، بعد از نصب روی هاست واقعی، با دو دستگاه یا دو مرورگر جداگانه تست کن:
+- ارسال پیام عادی
+- ارسال پیام reply
+- swipe به چپ روی پیام
+- حذف پیام
+- push notification در حالت باز و بسته بودن اپ
+- قفل/بازکردن/ویرایش خاطره قفل‌شده
+
+
+## SoulMate 3.2.2 - Emergency UI/Runtime Fix
+- رفع قطعی خطای `Invalid time value` که باعث توقف init و بهم‌ریختگی UI می‌شد.
+- ایمن‌سازی `formatDate`، `formatTime` و `parseServerDate` در برابر تاریخ خالی/نامعتبر.
+- محافظت از `updateLovePanel` تا خطای بخش «عشقمون» دیگر کل مسنجر را نخواباند.
+- حذف health-check تکراری از `enhancements.js` برای جلوگیری از spam کنسول و خطای مداوم `api/health.php`.
+- اصلاح Service Worker برای اینکه fetchهای API/آپلود در حالت خطای شبکه باعث Uncaught Promise نشوند.
+- bump کامل نسخه و cache به `3.2.2` و `v=322`.
+- اضافه شدن CSS نهایی تثبیت‌کننده موبایل: نوبار پایین، composer، quick love actions، toast، voice bubble و dark glass layout.
+- تثبیت وسط‌چینی آیکن‌ها و حذف focus رنگی/ناهماهنگ.

@@ -1,0 +1,38 @@
+/* Modular CSS entry: settings, privacy controls and install checklist. */
+.install-checklist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 0 12px;
+}
+
+.install-checklist span {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  padding: 0 10px;
+  background: var(--surface-muted);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.install-checklist b {
+  width: 17px;
+  height: 17px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.install-checklist .is-ok b {
+  background: rgba(20, 184, 166, .16);
+  color: var(--teal);
+}
+
+.install-checklist .is-warn b {
+  background: rgba(255, 61, 127, .14);
+  color: var(--rose);
+}

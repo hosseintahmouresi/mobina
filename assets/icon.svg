@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="SoulMate">
+  <defs>
+    <linearGradient id="bg" x1="72" y1="48" x2="430" y2="464" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#111827"/>
+      <stop offset=".56" stop-color="#1f2937"/>
+      <stop offset="1" stop-color="#312e81"/>
+    </linearGradient>
+    <linearGradient id="mark" x1="154" y1="138" x2="358" y2="374" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffd1dc"/>
+      <stop offset=".5" stop-color="#ff4f8f"/>
+      <stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".28"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="118" fill="url(#bg)"/>
+  <circle cx="256" cy="256" r="168" fill="none" stroke="#fff" stroke-width="2" opacity=".10"/>
+  <circle cx="256" cy="256" r="126" fill="none" stroke="#fff" stroke-width="2" opacity=".08"/>
+  <path filter="url(#shadow)" d="M156 238c0-56 45-101 101-101s101 45 101 101v20c0 56-45 101-101 101h-31l-58 43c-10 7-24 0-24-13v-55c-24-19-39-50-39-84v-12z" fill="#fff" opacity=".96"/>
+  <path d="M256 322s-78-45-78-97c0-29 22-51 51-51 15 0 27 7 35 18 8-11 20-18 35-18 29 0 51 22 51 51 0 52-94 97-94 97z" fill="url(#mark)"/>
+  <path d="M168 226c4-40 38-71 80-71" fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" opacity=".40"/>
+  <path d="M364 126h20M374 116v20M126 374h24M138 362v24" stroke="#ffd1dc" stroke-width="12" stroke-linecap="round" opacity=".82"/>
+</svg>

@@ -1,0 +1,40 @@
+/* Modular CSS entry: memories and privacy states. */
+.memory-card.is-private-locked {
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 61, 127, .08), rgba(20, 184, 166, .07)),
+    var(--surface);
+}
+
+.memory-private-cover {
+  margin-top: 12px;
+  min-height: 118px;
+  border: 1px dashed rgba(255, 61, 127, .28);
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 18px;
+  background: rgba(255,255,255,.45);
+  backdrop-filter: blur(10px);
+}
+
+.memory-private-cover span {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 6px;
+  border-radius: 16px;
+  background: var(--rose);
+  -webkit-mask: var(--icon-lock) center / 22px 22px no-repeat;
+  mask: var(--icon-lock) center / 22px 22px no-repeat;
+}
+
+.memory-private-cover strong {
+  color: var(--ink);
+}
+
+.memory-private-cover p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}

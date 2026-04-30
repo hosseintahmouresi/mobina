@@ -1,0 +1,138 @@
+/* Modular CSS entry: chat, composer, message status, search result UI. */
+.status {
+  min-width: 22px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.status[data-status="read"] {
+  color: var(--teal);
+}
+
+.status[data-status="queued"],
+.status[data-status="sending"] {
+  color: var(--rose);
+}
+
+.attachment-pill {
+  grid-template-columns: 34px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-file-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 12px;
+  background: rgba(255, 61, 127, .12);
+  display: grid;
+  place-items: center;
+}
+
+.pending-file-icon::before {
+  content: attr(data-kind);
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--rose);
+}
+
+.pending-file-meta {
+  min-width: 0;
+  display: grid;
+  gap: 1px;
+}
+
+.pending-file-meta strong,
+.pending-file-meta small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pending-file-meta small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.pending-wave {
+  width: 70px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.pending-wave span {
+  width: 3px;
+  height: var(--h);
+  border-radius: 999px;
+  background: var(--rose);
+  opacity: .72;
+}
+
+.search-result-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 0 10px;
+}
+
+.search-result-tabs button {
+  min-height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--muted);
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.search-result-tabs button.is-active {
+  color: #fff;
+  background: var(--ink);
+}
+
+.search-result-tabs b {
+  font-size: 11px;
+  opacity: .75;
+}
+
+.search-result-row.is-private {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgba(255, 61, 127, .2);
+  background: linear-gradient(135deg, rgba(255, 61, 127, .1), rgba(20, 184, 166, .08));
+}
+
+.private-lock {
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+  background: var(--rose);
+  -webkit-mask: var(--icon-lock) center / 18px 18px no-repeat;
+  mask: var(--icon-lock) center / 18px 18px no-repeat;
+}
+
+.search-result-row.is-private em {
+  display: block;
+  color: var(--muted);
+  font-style: normal;
+  font-size: 12px;
+}
+
+.private-unlock-cta {
+  min-height: 36px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--ink);
+  color: #fff;
+  padding: 0 12px;
+  font-weight: 800;
+}
