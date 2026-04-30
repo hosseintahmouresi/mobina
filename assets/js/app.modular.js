@@ -108,8 +108,11 @@ async function initApp() {
       showLoginView();
     }
     
-    // Setup keyboard shortcuts
-    setupKeyboardShortcuts();
+    // Setup enhanced UX features (Phase 3)
+    if (typeof UXEnhancements !== 'undefined') {
+      UXEnhancements.initKeyboardShortcuts(sendMessage, openSearch);
+      UXEnhancements.initSwipeGestures();
+    }
     
     // Setup visibility listeners for background handling
     setupVisibilityListeners();
@@ -486,6 +489,9 @@ function showToast(message, type = 'info') {
     toast.classList.remove('show');
   }, 3000);
 }
+
+// Export functions for use in modules
+window.showToast = showToast;
 
 // ========== Scroll Helpers ==========
 function isScrolledToBottom() {

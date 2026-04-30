@@ -24,6 +24,9 @@ $baseHref = htmlspecialchars(rtrim(isset($config['app']['base_url']) ? $config['
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="assets/icon-192.png">
+    <!-- Design System - Glassmorphism Luxury -->
+    <link rel="stylesheet" href="assets/css/design-system.css?v=323">
+    <!-- Legacy CSS (fallback) -->
     <link rel="stylesheet" href="assets/app.css?v=322">
     <link rel="stylesheet" href="assets/enhancements.css?v=322">
     <link rel="stylesheet" href="assets/css/base.css?v=322">
@@ -38,6 +41,7 @@ $baseHref = htmlspecialchars(rtrim(isset($config['app']['base_url']) ? $config['
     <script defer src="assets/js/modules/localdb.js?v=322"></script>
     <script defer src="assets/js/modules/polling.js?v=322"></script>
     <script defer src="assets/js/modules/imageOptimizer.js?v=322"></script>
+    <script defer src="assets/js/modules/ux-enhancements.js?v=323"></script>
     <script defer src="assets/js/app.modular.js?v=322"></script>
     <!-- Legacy fallback -->
     <script defer src="assets/app.js?v=322"></script>
