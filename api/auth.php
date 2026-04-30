@@ -2,15 +2,18 @@
 require_once __DIR__ . '/../includes/bootstrap.php';
 require_once __DIR__ . '/../includes/Helpers.php';
 
-// Initialize rate limiting
-RateLimiter::init();
+// Initialize rate limiting with database connection
+RateLimiter::init($pdo);
 
 $input = Security::jsonInput();
 $action = (string) (isset($input['action']) ? $input['action'] : 'login');
 
 $clientIp = Security::clientIp();
-if (in_array($action, ['login', 'pin_login'], true) && !RateLimiter::isAllowed($action . ':' . $clientIp, 5, 60)) {
-    Response::error('تلاش‌های ورود بسیار زیاد است. لطفاً بعداً دوباره سعی کنید.', 429);
+if (in_array($action, ['login', 'pin_login'], true)) {
+    // Limit: 5 attempts per minute per IP for login actions
+    if (!RateLimiter::isAllowed('login', $clientIp, 5, 60)) {
+        Response::error('تلاش‌های ورود بسیار زیاد است. لطفاً بعداً دوباره سعی کنید.', 429);
+    }
 }
 
 function auth_device_name($input)
