@@ -1,114 +1,153 @@
 <?php
 /**
- * SoulMate 2.5 - Rate Limiting & Security Enhancements
+ * SoulMate 3.2.2 - Phase 1 Security & Performance Improvements
+ * Rate Limiting with Database Backend & Auto-Cleanup
  */
 
 if (!class_exists('RateLimiter', false)) {
 final class RateLimiter
 {
-    private static $redis = null;
-    private static $useRedis = false;
-    private static $fallbackFile = null;
-
-    public static function init($config = [])
+    private static $pdo = null;
+    private static $tableName = 'rate_limits';
+    
+    /**
+     * Initialize rate limiter with database connection
+     */
+    public static function init($pdo = null)
     {
-        $useRedis = isset($config['use_redis']) && $config['use_redis'];
+        self::$pdo = $pdo;
         
-        if ($useRedis && extension_loaded('redis')) {
-            try {
-                self::$redis = new Redis();
-                self::$redis->connect('127.0.0.1', 6379, 1);
-                self::$useRedis = true;
-            } catch (Exception $e) {
-                // Fall back to file-based
-                self::$useRedis = false;
-            }
+        // Create table if not exists
+        if (self::$pdo) {
+            self::ensureTable();
+            self::cleanupOldRecords();
         }
-
-        if (!self::$useRedis) {
-            self::$fallbackFile = sys_get_temp_dir() . '/soulmate_ratelimit.json';
+    }
+    
+    /**
+     * Ensure rate_limits table exists
+     */
+    private static function ensureTable()
+    {
+        try {
+            self::$pdo->exec("
+                CREATE TABLE IF NOT EXISTS " . self::$tableName . " (
+                    id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                    identifier VARCHAR(120) NOT NULL,
+                    action VARCHAR(60) NOT NULL,
+                    created_at DATETIME NOT NULL,
+                    INDEX idx_identifier_action (identifier, action),
+                    INDEX idx_created_at (created_at)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+            ");
+        } catch (Exception $e) {
+            Security::logException($e);
+        }
+    }
+    
+    /**
+     * Clean up old rate limit records (older than 24 hours)
+     */
+    public static function cleanupOldRecords()
+    {
+        if (!self::$pdo) return;
+        
+        try {
+            $stmt = self::$pdo->prepare(
+                "DELETE FROM " . self::$tableName . " WHERE created_at < DATE_SUB(NOW(), INTERVAL 24 HOUR)"
+            );
+            $stmt->execute();
+        } catch (Exception $e) {
+            Security::logException($e);
         }
     }
 
     /**
      * Check if request exceeds rate limit
      * 
-     * @param string $key Unique identifier (user_id, IP, etc.)
+     * @param string $action Action type (login, upload, etc.)
+     * @param string $identifier Unique identifier (user_id, IP, etc.)
      * @param int $maxRequests Maximum requests allowed
      * @param int $windowSeconds Time window in seconds
      * @return bool True if within limit, false if exceeded
      */
-    public static function isAllowed($key, $maxRequests = 100, $windowSeconds = 60)
+    public static function isAllowed($action, $identifier, $maxRequests = 100, $windowSeconds = 60)
     {
-        $now = time();
-        $windowStart = $now - $windowSeconds;
-
-        if (self::$useRedis) {
-            return self::checkRedis($key, $maxRequests, $windowStart, $now);
-        } else {
-            return self::checkFile($key, $maxRequests, $windowStart, $now);
+        if (!self::$pdo) {
+            // Fallback to always allow if no DB connection
+            return true;
         }
-    }
-
-    private static function checkRedis($key, $maxRequests, $windowStart, $now)
-    {
-        if (!self::$redis) return true;
-
-        $count = (int) self::$redis->get("rate:{$key}");
-        if ($count >= $maxRequests) {
-            return false;
-        }
-
-        self::$redis->incr("rate:{$key}");
-        self::$redis->expire("rate:{$key}", 60);
-        return true;
-    }
-
-    private static function checkFile($key, $maxRequests, $windowStart, $now)
-    {
-        if (!self::$fallbackFile) return true;
-
-        $data = [];
-        if (file_exists(self::$fallbackFile)) {
-            $json = @file_get_contents(self::$fallbackFile);
-            if ($json) {
-                $data = json_decode($json, true) ?? [];
+        
+        $key = $action . ':' . $identifier;
+        $windowStart = gmdate('Y-m-d H:i:s', time() - $windowSeconds);
+        
+        try {
+            // Count recent requests
+            $stmt = self::$pdo->prepare(
+                "SELECT COUNT(*) as count FROM " . self::$tableName . 
+                " WHERE identifier = ? AND action = ? AND created_at > ?"
+            );
+            $stmt->execute([$identifier, $action, $windowStart]);
+            $row = $stmt->fetch();
+            $count = (int) ($row['count'] ?? 0);
+            
+            if ($count >= $maxRequests) {
+                return false;
             }
+            
+            // Record this request
+            $stmt = self::$pdo->prepare(
+                "INSERT INTO " . self::$tableName . " (identifier, action, created_at) VALUES (?, ?, NOW())"
+            );
+            $stmt->execute([$identifier, $action]);
+            
+            return true;
+        } catch (Exception $e) {
+            Security::logException($e);
+            // Fail open - allow request if DB error
+            return true;
         }
-
-        // Clean old entries
-        foreach ($data as $k => $timestamps) {
-            $data[$k] = array_filter($timestamps, function($t) use ($windowStart) {
-                return $t > $windowStart;
-            });
-            if (empty($data[$k])) {
-                unset($data[$k]);
-            }
-        }
-
-        // Check limit
-        if (isset($data[$key]) && count($data[$key]) >= $maxRequests) {
-            return false;
-        }
-
-        // Add new timestamp
-        if (!isset($data[$key])) {
-            $data[$key] = [];
-        }
-        $data[$key][] = $now;
-
-        @file_put_contents(self::$fallbackFile, json_encode($data), LOCK_EX);
-        return true;
     }
 
-    public static function reset($key)
+    /**
+     * Reset rate limit for a specific key
+     */
+    public static function reset($action, $identifier)
     {
-        if (self::$useRedis && self::$redis) {
-            self::$redis->del("rate:{$key}");
-        } else if (self::$fallbackFile && file_exists(self::$fallbackFile)) {
-            $data = json_decode(file_get_contents(self::$fallbackFile), true) ?? [];
-            unset($data[$key]);
-            @file_put_contents(self::$fallbackFile, json_encode($data), LOCK_EX);
+        if (!self::$pdo) return;
+        
+        try {
+            $stmt = self::$pdo->prepare(
+                "DELETE FROM " . self::$tableName . " WHERE identifier = ? AND action = ?"
+            );
+            $stmt->execute([$identifier, $action]);
+        } catch (Exception $e) {
+            Security::logException($e);
+        }
+    }
+    
+    /**
+     * Get remaining requests for an action
+     */
+    public static function getRemaining($action, $identifier, $maxRequests, $windowSeconds)
+    {
+        if (!self::$pdo) return $maxRequests;
+        
+        $windowStart = gmdate('Y-m-d H:i:s', time() - $windowSeconds);
+        
+        try {
+            $stmt = self::$pdo->prepare(
+                "SELECT COUNT(*) as count FROM " . self::$tableName . 
+                " WHERE identifier = ? AND action = ? AND created_at > ?"
+            );
+            $stmt->execute([$identifier, $action, $windowStart]);
+            $row = $stmt->fetch();
+            $count = (int) ($row['count'] ?? 0);
+            
+            return max(0, $maxRequests - $count);
+        } catch (Exception $e) {
+            Security::logException($e);
+            return $maxRequests;
         }
     }
 }

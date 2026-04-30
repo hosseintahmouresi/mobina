@@ -1,4 +1,7 @@
 <?php
+/**
+ * SoulMate 3.2.2 - Phase 1 Security & Database Schema Updates
+ */
 return [
     "CREATE TABLE IF NOT EXISTS settings (
         setting_key VARCHAR(80) NOT NULL PRIMARY KEY,
@@ -69,6 +72,7 @@ return [
         open_at DATETIME NULL,
         created_at DATETIME NOT NULL,
         deleted_at DATETIME NULL,
+        FULLTEXT INDEX idx_messages_body_fulltext (body),
         INDEX idx_messages_created (created_at),
         INDEX idx_messages_sender (sender_id),
         INDEX idx_messages_deleted_id (deleted_at, id),
@@ -164,5 +168,14 @@ return [
         INDEX idx_love_items_attachment (attachment_id),
         CONSTRAINT fk_love_items_attachment FOREIGN KEY (attachment_id) REFERENCES attachments(id) ON DELETE SET NULL,
         CONSTRAINT fk_love_items_user FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci",
+
+    "CREATE TABLE IF NOT EXISTS rate_limits (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        identifier VARCHAR(120) NOT NULL,
+        action VARCHAR(60) NOT NULL,
+        created_at DATETIME NOT NULL,
+        INDEX idx_identifier_action (identifier, action),
+        INDEX idx_created_at (created_at)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
 ];
